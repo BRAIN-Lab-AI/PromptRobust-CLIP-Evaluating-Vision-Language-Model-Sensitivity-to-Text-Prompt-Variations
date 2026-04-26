@@ -263,14 +263,8 @@ C:/Users/basel/Desktop/datasets/oxford_pets
 5. **Training**
     Configure the training parameters in the provided configuration file and run:
     ```bash
-        python train.py ^
---root C:/Users/basel/Desktop/datasets ^
---seed 1 ^
---trainer CoCoOp ^
---dataset-config-file configs/datasets/oxford_pets.yaml ^
---config-file configs/trainers/CoCoOp/vit_b16_c4_ep10_batch1_ctxv1.yaml ^
-DATASET.NUM_SHOTS 16 ^
-DATASET.SUBSAMPLE_CLASSES base
+        python train.py --root C:/Users/basel/Desktop/datasets --seed 1 --trainer CoCoOp --dataset-config-file configs/datasets/oxford_pets.yaml --config-file configs/trainers/CoCoOp/vit_b16_c4_ep10_batch1_ctxv1.yaml DATASET.NUM_SHOTS 16 DATASET.SUBSAMPLE_CLASSES base
+
     ```
 
 ## Acknowledgments
