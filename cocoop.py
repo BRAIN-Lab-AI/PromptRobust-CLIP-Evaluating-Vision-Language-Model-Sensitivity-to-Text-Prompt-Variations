@@ -276,10 +276,8 @@ class CoCoOp(TrainerX):
 
         self.scaler = GradScaler("cuda") if cfg.TRAINER.COCOOP.PREC == "amp" else None
 
-        # Improvement 1/3: stronger consistency weight
         self.lambda_cons = 30
 
-        # Optional temperature for KL consistency
         self.temp = 1 
 
         device_count = torch.cuda.device_count()
@@ -291,8 +289,6 @@ class CoCoOp(TrainerX):
         ce1 = F.cross_entropy(logits1, label)
         ce2 = F.cross_entropy(logits2, label)
 
-        # Improvement 2/3: KL consistency instead of MSE
-        # One-way teacher-student style to reduce collapse
         log_p2 = F.log_softmax(logits2 / self.temp, dim=1)
         p1 = F.softmax(logits1.detach() / self.temp, dim=1)
         cons_loss = F.kl_div(log_p2, p1, reduction="batchmean") * (self.temp ** 2)
@@ -341,20 +337,17 @@ class CoCoOp(TrainerX):
         return loss_summary
 
     def model_inference(self, input):
-        # Improvement 3/3: average probabilities instead of logits
         logits1 = self.model(input, template_id=0)
         logits2 = self.model(input, template_id=1)
 
 
         logits = (logits1 + logits2) / 2.0
 
-        # logit calibration
         temperature = 1.2   
         logits = logits / temperature
 
         probs = F.softmax(logits, dim=1)
 
-        # evaluator expects class scores; probabilities are fine
         return probs
 
     def parse_batch_train(self, batch):
